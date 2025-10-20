@@ -100,7 +100,7 @@ def extract_custom_properties(file_path):
             "field_type": row.iloc[3],
             "raw_options": row.iloc[10] if len(row) > 10 else None,
             "raw_options_en": row.iloc[11] if len(row) > 11 else None,
-            "mandatory": str(row.iloc[9]).strip().lower() in ["yes", "ja", "true", "1"]
+            "mandatory": str(row.iloc[4]).strip().lower() in ["yes", "ja", "true", "1"]
             if len(row) > 5 else False
         }
         records.append(record)
