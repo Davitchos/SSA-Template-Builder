@@ -32,9 +32,12 @@ def assemble_full_template(records_message, records_standard_properties, records
     for record in records_costom_properties:
         section = record["section"]
         title_de = record["title_de"]
+        title_en = record["title_en"]
         question_de = record["question_de"]
+        question_en = record["question_en"]
         field_type = record["field_type"]
         raw_options = record["raw_options"]
+        raw_options_en = record.get("raw_options_en")
         mandatory = record["mandatory"]
 
         if pd.notna(section):
@@ -63,8 +66,8 @@ def assemble_full_template(records_message, records_standard_properties, records
 
         prop = {
             "widget": widget,
-            "text": {"de": question_de, "en": ""},
-            "shortText": {"de": title_de, "en": ""},
+            "text": {"de": question_de, "en": question_en},
+            "shortText": {"de": title_de, "en": title_en},
             "slug": slug,
             "type": ptype,
             "isFilterable": False,
@@ -72,8 +75,31 @@ def assemble_full_template(records_message, records_standard_properties, records
         }
 
         # Handle dropdown/multi options
-        if ptype == "MULTI" and raw_options and pd.notna(raw_options):
+        if (
+            ptype == "MULTI" and 
+            raw_options and pd.notna(raw_options) and 
+            raw_options_en and pd.notna(raw_options_en)
+        ):
             options = []
+            for line_de, line_en in zip(str(raw_options).splitlines(), str(raw_options_en).splitlines()):
+                label_de = line_de.strip("•- \t\n\r")
+                label_en = line_en.strip("•- \t\n\r")
+                
+                if label_de and label_en:
+                    options.append({
+                        "label": {"de": label_de, "en": label_en},
+                        "slug": utils.slugify(label_de)
+                    })
+            if options:
+                prop["options"] = options
+
+        """if (
+            ptype == "MULTI" and 
+            raw_options and pd.notna(raw_options) and 
+            raw_options_en and pd.notna(raw_options_en)
+        ):
+            options = []
+            
             for line in str(raw_options).splitlines():
                 label = line.strip("•- \t\n\r")
                 if label:
@@ -82,7 +108,8 @@ def assemble_full_template(records_message, records_standard_properties, records
                         "slug": utils.slugify(label)
                     })
             if options:
-                prop["options"] = options
+                prop["options"] = options"""
+
 
         properties.append(prop)
         section_questions.append({

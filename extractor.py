@@ -94,10 +94,13 @@ def extract_custom_properties(file_path):
         record = {
             "section": row.iloc[0],
             "title_de": row.iloc[1],
+            "title_en": row.iloc[7],
             "question_de": row.iloc[2],
+            "question_en": row.iloc[8],
             "field_type": row.iloc[3],
-            "raw_options": row.iloc[4] if len(row) > 4 else None,
-            "mandatory": str(row.iloc[5]).strip().lower() in ["yes", "ja", "true", "1"]
+            "raw_options": row.iloc[10] if len(row) > 10 else None,
+            "raw_options_en": row.iloc[11] if len(row) > 11 else None,
+            "mandatory": str(row.iloc[9]).strip().lower() in ["yes", "ja", "true", "1"]
             if len(row) > 5 else False
         }
         records.append(record)
